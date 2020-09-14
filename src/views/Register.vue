@@ -1,0 +1,96 @@
+<template>
+    <div id="register">
+        <div id="registercom">
+            <div>
+                <h1>注册</h1>
+            </div>
+            <div id="zcinput">
+                <h2>注册账号</h2>
+                <el-input v-model="username" placeholder="请输入账号" prefix-icon="el-icon-user"></el-input>
+                <el-input v-model="password" placeholder="请输入密码" prefix-icon="el-icon-lock"></el-input>
+            </div>
+            <div>
+            <el-button type="primary" @click="clkRegister" round id="btnzc" >注册账号</el-button>
+            <el-button type="primary" @click="gogoLogin" round id="btngodl">已有账号？去登陆</el-button>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+export default {
+    name:"Login",
+    data(){
+        return{
+            username:'',
+            password:'',
+        }
+    },
+    methods:{
+        clkRegister(){
+            var that= this
+            this.$axios({
+                url:'/register/userRegister?username='+that.username+'&password='+that.password,
+                method:'get'
+            })
+            .then(res=>{
+                console.log(res);
+                if(res.data.code==200){
+                    this.$message({
+                        showClose: true,
+                        message: res.data.msg,
+                        type: 'success'
+                        });
+                    this.$router.push({ name: "Login" });
+                }
+                else if(res.data.code==201){
+                    this.$message.error(res.data.msg);
+                }
+                
+            })
+            .catch(error=>{
+                console.log(error);
+                console.log('请求失败')})   
+        },
+        gogoLogin(){
+            this.$router.push({ name: "Login" });
+        }
+    }
+}
+</script>
+<style>
+    #register{
+        padding: 0;
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        background: skyblue;
+        display: flex;
+        align-items: center;
+    }
+    #registercom{
+        margin: auto;
+        width: 300px;
+        height: 600px;
+        background: white;
+        padding: 0 40px;
+        border-radius: 5px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        opacity: 0.85;
+    }
+    #registercom p{
+        font-size: .8em;
+        color: #757C80;
+    }
+    #btnzc{
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    #btngodl{
+        width: 100%;
+        margin: 0;
+    }
+</style>
