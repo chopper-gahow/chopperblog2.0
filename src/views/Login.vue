@@ -46,14 +46,6 @@ export default {
                     message: res.data.msg,
                     type: 'success'
                     });
-                    this.$axios({
-                        method:'get',
-                        url:'/token/cper/gettoken'
-                    })
-                    .then(res=>{
-                        this.$store.state.qiniutoken = res.data.token
-                        sessionStorage.setItem('qiniutoken',res.data.token)
-                    })
                     this.$store.state.username=res.data.data.username
                     this.$store.state.password=res.data.data.password
                     this.$store.state.nickname=res.data.data.nickname
@@ -81,7 +73,8 @@ export default {
         gogoRegister(){
             this.$router.push({ name: "Register" });
         }
-    }
+    },
+
 }
 </script>
 <style>

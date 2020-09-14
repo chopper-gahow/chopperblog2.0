@@ -56,6 +56,8 @@ export default {
         })
         .then(res=>{
             this.mycollect = res.data.data
+            console.log(this.mycollect);
+
         })
         .then(()=>{
             this.$axios({
@@ -64,6 +66,7 @@ export default {
             })
             .then(res=>{
                 this.myblog = res.data.data
+                console.log(this.myblog);
             })
         })
     }

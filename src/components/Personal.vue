@@ -72,6 +72,14 @@ export default {
     mounted(){
         console.log(123);
         console.log(this.$store.state.qiniutoken);
+        this.$axios({
+                        method:'get',
+                        url:'/token/cper/gettoken'
+                    })
+                    .then(res=>{
+                        this.postData.token = res.data.token
+                        sessionStorage.setItem('qiniutoken',res.data.token)
+                    })
     },
     methods:{
         outLogin(){

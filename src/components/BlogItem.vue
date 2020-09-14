@@ -16,7 +16,7 @@
             </div>
         </div>
         <el-tooltip class="item" effect="dark" content="撰写博客" placement="left">
-        <button id="writeblogbtn" @click="centerDialogVisible = true"><i class="el-icon-edit"></i></button>
+        <button id="writeblogbtn" @click="openDialog"><i class="el-icon-edit"></i></button>
         </el-tooltip>
         <el-dialog
             id="blogdialog"
@@ -89,6 +89,7 @@ export default {
             centerDialogVisible:false,
             title:'',
             text:``,
+            isLogin:sessionStorage.getItem('isLogin'),
             postData:{
                 token:this.$store.state.qiniutoken,
                 domain:'hcpr.s3-cn-south-1.qiniucs.com'
@@ -140,7 +141,6 @@ export default {
             let quill = this.$refs.myQuillEditor.quill
             if(res.hash!==''){
                 let length = quill.getSelection().index;
-                console.log(res.info);
                 quill.insertEmbed(length,'image','http://hchopper.top/'+res.hash)
                 quill.setSelection(length + 1)
             }
@@ -150,17 +150,23 @@ export default {
             this.quillUpdateImg= false
 
         },
-        // uploadError(res, file) {},
+        openDialog(){
+            console.log(this.postData.token);
+
+            if(sessionStorage.length!==0){
+                this.centerDialogVisible = true
+            }
+            else{
+                this.$message.error('请先登录');
+            }
+        },
         upload(){
+            
             var that = this;
             this.$axios.post('/blog/writeblog',{
                 title:that.title,
                 text:that.text
             })
-            // this.$axios({
-            //     method:'post',
-            //     url:'/blog/writeblog?title='+that.title+'&text='+that.text,
-            // })
             .then(res=>{
                 console.log(res);
                 if(res.data.code==200){
@@ -180,14 +186,22 @@ export default {
             })
         }
     },
-    created(){
+    mounted(){
             this.$axios({
                 url:'/blog/getblog',
                 method:'get'
             })
             .then(res=>{
-                console.log(this.postData.token);
                 this.blogitems=res.data.data.reverse()
+            })
+            .then(()=>{
+                this.$axios({
+                        method:'get',
+                        url:'/token/cper/gettoken'
+                    })
+                .then(res=>{
+                        this.postData.token = res.data.token
+                })
             })
             .catch(error=>{
                 console.log(error);

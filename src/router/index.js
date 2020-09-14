@@ -7,6 +7,7 @@ import Register from '../views/Register.vue'
 import Personal from '../components/Personal.vue'
 import BlogInfo from '../components/BlogInfo.vue'
 import Mine from '../components/Mine.vue'
+import Daily from '../components/Daily.vue'
 
 Vue.use(VueRouter)
 
@@ -37,6 +38,14 @@ Vue.use(VueRouter)
     components:{
       header:Head,
       main:Mine
+    }
+  },
+  {
+    path:'/daily',
+    name:'Daily',
+    components:{
+      header:Head,
+      main:Daily
     }
   },
   {

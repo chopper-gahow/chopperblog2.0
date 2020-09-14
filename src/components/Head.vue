@@ -5,7 +5,7 @@
           <div id="nav">
               <div id="navcontent">
                   <span @click="goBlog">博客</span>
-                  <span >每日推荐</span>
+                  <span @click="goDaily">每日推荐</span>
                   <span>学习文档</span>
                   <span @click="goPersonal">个人信息</span>
                   <span>关于</span>
@@ -29,6 +29,9 @@ export default {
         goPersonal(){
             this.$router.push({ name: "Personal" });
         },
+        goDaily(){
+            this.$router.push({ name: "Daily" });
+        }
     },
     mounted(){
       window.addEventListener('unload',()=>{
@@ -63,6 +66,8 @@ export default {
         align-items: center;
     }
     #logo{
+        width: 188px;
+
         height: 100%;
         display: flex;
         align-items: center;
@@ -78,7 +83,6 @@ export default {
         cursor: pointer;
     }
     .logo{
-        width: 130px;
         display: flex;
         align-items: flex-end;
         border-bottom: 3px skyblue solid;
