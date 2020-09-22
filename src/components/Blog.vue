@@ -12,7 +12,7 @@
                   <span id="titledec">你可以以游客的身份访问，也可以注册并登陆账号</span>
                   </div>
                   <div id="longinuser" v-if="isLogin">
-                      <div @click="goMine" id="loginheadimg">
+                      <div @click="goMineBlog" id="loginheadimg">
                           <img :src="headimg" alt="">
                       </div>
                   </div>
@@ -52,9 +52,8 @@ export default {
         goPersonal(){
             this.$router.push({ name: "Personal" });
         },
-        goMine(){
-            this.$router.push({ name: "Mine" });
-
+        goMineBlog(){
+            this.$router.push({ name: "MineBlog" });
         }
     }
 }

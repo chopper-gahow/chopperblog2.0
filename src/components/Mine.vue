@@ -10,13 +10,19 @@
                         <div id="mycolltitle">{{item.title}}</div>
                     </div>
                 </div>
+                
             </el-tab-pane>
             <el-tab-pane label="我的博客" name="second">
-                <div v-for="(item,index) in myblog" :key="index" id="collectitem" @click="goBlog(item._id)">
+                <div id="lal">
+                    <div v-for="(item,index) in myblog" :key="index" id="collectitem" @click="goBlog(item._id)">
                     <div id="mycolhead"><img :src="item.headimg" alt=""></div>
                     <div id="mycolwriter">{{item.writerickname}}</div>
                     <div id="mytitleandtext">
                         <div id="mycolltitle">{{item.title}}</div>
+                    </div>
+                    </div>
+                    <div id="deletebutton" v-for="(item) in myblog" :key="item._id">
+                            <el-button type="danger" icon="el-icon-delete" circle @click="deletethis(item._id)" :loading="isloading"></el-button>
                     </div>
                 </div>
             </el-tab-pane>
@@ -32,12 +38,16 @@ export default {
         return{
             activeName: 'first',
             mycollect:[],
-            myblog:[]
+            myblog:[],
+            isloading:false,
+            a:0,
+            b:0,
+            c:0
         }
     },
     methods: {
-      handleClick(tab, event) {
-        console.log(tab, event);
+      
+      handleClick() {
       },
       goBlog(id){
             if(this.$store.state.isLogin==false){
@@ -56,8 +66,6 @@ export default {
         })
         .then(res=>{
             this.mycollect = res.data.data
-            console.log(this.mycollect);
-
         })
         .then(()=>{
             this.$axios({
@@ -66,7 +74,6 @@ export default {
             })
             .then(res=>{
                 this.myblog = res.data.data
-                console.log(this.myblog);
             })
         })
     }
@@ -95,8 +102,8 @@ export default {
 
     }
     #collectitem{
-        height: 50px;
-        width: 45vw;
+        height: 60px;
+        width: 35vw;
         background: rgb(231, 252, 231);
         border: 1px rgb(193, 193, 193) solid;
         border-radius: 25px;
@@ -111,10 +118,10 @@ export default {
         transform: translateY(-2px);
     }
     #mycolhead{
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
         overflow: hidden;
-        border-radius: 25px;
+        border-radius: 30px;
     }
     #mycolhead>img{
         width: 100%;
@@ -140,5 +147,18 @@ export default {
         overflow:hidden;
         text-overflow:ellipsis;
         white-space:nowrap
+    }
+    #deletebutton{
+        width: 60px;
+        height: 60px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #lal{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 </style>

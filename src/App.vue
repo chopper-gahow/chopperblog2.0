@@ -2,6 +2,7 @@
   <div id="app">
     <router-view name="header"/>
     <router-view name="main"/>
+    <!-- <router-view name="footer"/> -->
   </div>
 </template>
 
@@ -28,6 +29,7 @@ export default {
             localStorage.clear()
           })
         }
+        
     })
     window.addEventListener("beforeunload", () => {
         this.beginTime = new Date().getTime();
@@ -45,5 +47,6 @@ export default {
     max-width: 100vw;
     min-height: 100vh;
     background: #f5f6f7;
+    position: relative;
   }
 </style>

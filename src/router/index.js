@@ -6,10 +6,16 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Personal from '../components/Personal.vue'
 import BlogInfo from '../components/BlogInfo.vue'
-import Mine from '../components/Mine.vue'
+import MineBlog from '../components/MineBlog.vue'
+import MineCollect from '../components/MineCollect.vue'
 import Daily from '../components/Daily.vue'
+import Footer from '../components/Footer.vue'
 
 Vue.use(VueRouter)
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
   const routes = [
   {
@@ -21,7 +27,8 @@ Vue.use(VueRouter)
     name:'Blog',
     components:{
       header:Head,
-      main:Blog
+      main:Blog,
+      footer:Footer
     }
   },
   {
@@ -29,15 +36,27 @@ Vue.use(VueRouter)
     name:'BlogInfo',
     components:{
       header:Head,
-      main:BlogInfo
+      main:BlogInfo,
+      footer:Footer
+
     }
   },
   {
-    path:'/mine',
-    name:'Mine',
+    path:'/mineblog',
+    name:'MineBlog',
     components:{
       header:Head,
-      main:Mine
+      main:MineBlog,
+      footer:Footer
+    }
+  },
+  {
+    path:'/minecollect',
+    name:'MineCollect',
+    components:{
+      header:Head,
+      main:MineCollect,
+      footer:Footer
     }
   },
   {
@@ -45,7 +64,8 @@ Vue.use(VueRouter)
     name:'Daily',
     components:{
       header:Head,
-      main:Daily
+      main:Daily,
+      footer:Footer
     }
   },
   {
@@ -53,7 +73,8 @@ Vue.use(VueRouter)
     name:'Personal',
     components:{
       header:Head,
-      main:Personal
+      main:Personal,
+      footer:Footer
     }
   },
   { 
