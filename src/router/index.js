@@ -10,6 +10,7 @@ import MineBlog from '../components/MineBlog.vue'
 import MineCollect from '../components/MineCollect.vue'
 import Daily from '../components/Daily.vue'
 import Footer from '../components/Footer.vue'
+import OthersPage from '../components/OthersPage.vue'
 
 Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
@@ -56,6 +57,15 @@ VueRouter.prototype.push = function push (location) {
     components:{
       header:Head,
       main:MineCollect,
+      footer:Footer
+    }
+  },
+  {
+    path:'/otherspage',
+    name:'OthersPage',
+    components:{
+      header:Head,
+      main:OthersPage,
       footer:Footer
     }
   },

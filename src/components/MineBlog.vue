@@ -69,7 +69,6 @@ export default {
             mycollect:[],
             myblogcount:0,
             mycollectcount:0,
-            commentscount:0,
             ishascontent:''
         }
     },

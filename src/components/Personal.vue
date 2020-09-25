@@ -24,17 +24,32 @@
                     </div>
                 </el-tab-pane>
                 <el-tab-pane label="头像管理" name="second">
-                    <el-upload
-                        class="avatar-uploader"
-                        action="http://upload-z2.qiniup.com"
-                        :data="postData"
-                        :show-file-list="false"
-                        :on-success="handleAvatarSuccess"
-                        :before-upload="beforeAvatarUpload"
-                        v-loading="quillUpdateImg">
+                    <div id="fangyuan">
+                        <div id="zhengimg">
                         <img id="img" v-if="imageUrl" :src="imageUrl" class="avatar">
                         <img id="img" v-else :src="personalheadimg">
-                    </el-upload>
+                    </div>
+                    <div id="yuanimg">
+                        <img id="img" v-if="imageUrl" :src="imageUrl" class="avatar">
+                        <img id="img" v-else :src="personalheadimg">
+                    </div>
+                    </div>
+                    <el-button type="success" round @click="toggleShow" plain>设置头像</el-button>
+                     <my-upload  
+                     @crop-success="cropSuccess" 
+                     @crop-upload-success="handleAvatarSuccess"
+                     v-model="show" 
+                     :width="200" 
+                     :height="200" 
+                     img-format="png" 
+                     :size="size"
+                     langType='zh'
+                     :noRotate='false'
+                     field="file"
+                     url='http://upload-z2.qiniup.com'
+                     :params=postData
+                     ></my-upload>
+                    <img :src="imageUrl">
                 </el-tab-pane>
                 <el-tab-pane label="账号信息" name="third">
                     <div>账号：{{personalusername}}</div>
@@ -48,6 +63,9 @@
     </div>
 </template>
 <script>
+import 'babel-polyfill'; 
+import myUpload from 'vue-image-crop-upload';
+
 export default {
     name:'Personal',
     data(){
@@ -62,12 +80,17 @@ export default {
             imageUrl:'',
             postData:{
                 token:this.$store.state.qiniutoken,
-                domain:'hcpr.s3-cn-south-1.qiniucs.com'
+                domain:'hcpr.s3-cn-south-1.qiniucs.com',
             },
             personalusername:this.$store.state.username,
             personalpassword:this.$store.state.password,
-            outuser:this.$store.state.username
+            outuser:this.$store.state.username,
+            show:false,
+            size:2.1
         }
+    },
+    components: {
+      "my-upload": myUpload
     },
     mounted(){
         console.log(123);
@@ -82,6 +105,12 @@ export default {
                     })
     },
     methods:{
+        cropSuccess(){
+            console.log('read tp upload');
+        },
+        toggleShow() {
+            this.show = !this.show;
+        },
         outLogin(){
             var that = this
             this.$axios({
@@ -109,42 +138,26 @@ export default {
             },
         handleAvatarSuccess(res, file) {
             var that = this
-            this.imageUrl = URL.createObjectURL(file.raw);
+            try {
+                this.imageUrl = file.raw;
+            } catch (error) {
+                this.imageUrl = window.URL.createObjectURL(file.raw);
+            }
             this.$axios({
                 method:"get",
                 url:'/personal/editheadimg?headimg=http://hchopper.top/'+res.hash,
-            }).then(res=>{
-                sessionStorage.setItem('headimg',res.data.data.headimg)
+            }).then(ress=>{
+                sessionStorage.setItem('headimg',ress.data.data.headimg)
                 that.$store.state.headimg=sessionStorage.getItem('headimg')
-                this.quillUpdateImg = false
-                location.reload()
-            }).then((res)=>{
-                this.$message({
-                    showClose: true,
-                    message: res.data.msg,
-                    type: 'success',
-                });
-                this.$message({
-                    showClose: true,
-                    message: '上传成功',
-                    type: 'success'
-                });
+                location.reload()  
             })
-        },
-        beforeAvatarUpload(file) {
-            const isJPG = file.type === 'image/jpeg';
-            const isLt2M = file.size / 1024 / 1024 < 2;
-            this.quillUpdateImg = true
-            if (!isJPG) {
-            this.$message.error('上传头像图片只能是 JPG 格式!');
-            }
-            if (!isLt2M) {
-            this.$message.error('上传头像图片大小不能超过 2MB!');
-            }
-            return isJPG && isLt2M;
-        },
-        editpwd(){
-            alert('别急还没写');
+            .then(()=>{
+                this.$message({
+                        showClose: true,
+                        message: '头像修改成功',
+                        type: 'success'
+                        });
+            })
         },
         editniknam(){
             var that = this;
@@ -233,9 +246,34 @@ export default {
 }
 </script>
 <style>
+    #fangyuan{
+        width: 400px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 50px;
+    }
+    #yuanimg{
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        border:3px rgb(96, 164, 118) dashed;
+    }
+    #yuanimg>img{
+        width: 100%;
+    }
     #nologin{
         padding-top: 30%;
         text-align: center;
+    }
+    #zhengimg{
+        height: 200px;
+        width: 200px;
+        border:3px  rgb(96, 164, 118) dashed;
+    }
+    #zhengimg>img{
+        width: 100%;
     }
     #personalPage{
         width: 70vw;

@@ -4,11 +4,11 @@
             <div>{{title}}</div>
         </div>
         <div id="writer">
-            <div id="writehead">
+            <div id="writehead" @click="gohispersonal">
                 <img :src="headimg" alt="">
             </div>
             <div id="nameanddate">
-                <div id="writerickname">{{writerickname}}</div>
+                <div id="writerickname"><span  @click="gohispersonal">{{writerickname}}</span></div>
                 <div>{{writedate}}</div>
             </div>
         </div>
@@ -17,12 +17,22 @@
         </div>
         <div id="collect">
             <div id="collectbtndiv">
-                <el-button v-if="!iscollect" type="success" plain @click="collectblog" icon="el-icon-s-management">收藏这篇博客</el-button>
-                <el-button v-if="iscollect" type="danger" plain @click="discollectblog" icon="el-icon-delete">取消收藏博客</el-button>
+                <el-button v-if="!iscollect" type="success" plain @click="collectblog" icon="el-icon-star-off">收藏这篇博客</el-button>
+                <el-button v-if="iscollect" type="danger" plain @click="discollectblog" icon="el-icon-star-on">取消收藏博客</el-button>
+                <div>
+                    <el-button  v-if="!islike" type="primary"  plain round @click="likeblog"><van-icon id="likebtn" name="like-o" /> 赞一下</el-button>
+                    <el-button  v-if="islike" type="danger"  plain round @click="dislikeblog"><van-icon id="likebtn" name="like" /> 不赞了</el-button>
+                </div>
             </div>
         </div>
         <div id="comments">
-            <div id="commentscomuntdiv"><span id="commentscount">0条评论</span></div>
+            <div id="commentscomuntdiv">
+                <span id="commentscount">{{commentcount}}条评论</span>
+                <div id="likeandcoll">
+                    <span id="commentscount">{{likecount}}点赞</span>
+                    <span id="commentscount">{{collectcount}}收藏</span>
+                </div>
+            </div>
             <div id="commerc">
                 <div id="commerhead"><img :src="commerheadimg" alt=""></div>
                 <el-input v-model="comment" placeholder="请输入内容"></el-input>
@@ -45,6 +55,7 @@ export default {
     name:"BlogInfo",
     data(){
         return{
+            writer:'',
             id: sessionStorage.getItem("blogid"),
             title: '',
             text: '',
@@ -55,10 +66,47 @@ export default {
             commerheadimg:this.$store.state.headimg,
             comment:'',
             comments:[],
-            iscollect:false
+            iscollect:false,
+            islike:false,
+            commentcount:0,
+            likecount:0,
+            collectcount:0
         }
     },
     methods:{
+        likeblog(){
+            this.$axios({
+                method:'get',
+                url:'/blog/like?blogid='+this.id
+            })
+            .then(res=>{
+                if(res.data.code == 200){
+                    location.reload()
+                }
+                else{
+                    this.$message.error(res.data.msg);
+                }
+            })
+        },
+        dislikeblog(){
+            this.$axios({
+                method:'get',
+                url:'/blog/dislike?blogid='+this.id
+            })
+            .then(res=>{
+                if(res.data.code == 200){
+                    location.reload()
+                }
+                else{
+                    this.$message.error(res.data.msg);
+                }
+            })
+        },
+        gohispersonal(){
+            sessionStorage.setItem('othernick',this.writerickname)
+            sessionStorage.setItem('otherusername',this.writer)
+            this.$router.push({name:"OthersPage"})
+        },
         collectblog(){
             this.$axios({
                 method:'get',
@@ -128,13 +176,16 @@ export default {
             url:'/blog/findblogbyid?id='+that.id+"&visitor="+that.visitor
         })
         .then(res=>{
+            this.likecount = res.data.data.liked.length
+            this.collectcount = res.data.data.collected.length
+            this.commentcount = res.data.data.commentcount
             this.title = res.data.data.title
             this.text = res.data.data.text
             this.writedate = res.data.data.writedate
             this.writerickname = res.data.data.writerickname
             this.headimg = res.data.data.headimg
             this.comments = res.data.data.comments
-
+            this.writer = res.data.data.writer
         })
         .then(()=>{
             this.$axios({
@@ -158,7 +209,20 @@ export default {
                 else{
                     this.iscollect = false
                 }
-                console.log(res);
+            })
+        })
+        .then(()=>{
+            this.$axios({
+                method:'get',
+                url:'/blog/isuserlike?blogid='+this.id
+            })
+            .then(res=>{
+                if(res.data.data === true){
+                    this.islike = res.data.data
+                }
+                else{
+                    this.islike = false
+                }
             })
         })
     },
@@ -172,6 +236,24 @@ export default {
 </script>
 
 <style>
+    #likeandcoll{
+        font-size: 1em;
+        color: #2A2E2E;
+        font-weight: 600;
+    }
+    #likeandcoll>span{
+        margin-left: 30px;
+    }
+    #likebtn{
+        color: red;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+    #collectbtndiv{
+        display: flex;
+        justify-content: space-between;
+    }
     #bloginfotitle{
         width: 100%;
         height: 300px;
@@ -201,13 +283,21 @@ export default {
         justify-content: center;
     }
     #writerickname{
+        width: auto;
         color: #13aa52;
+    }
+    #writerickname>span{
+        cursor: pointer;
+    }
+    #writerickname>span:hover{
+        text-decoration: underline;
     }
     #writehead{
         width: 80px;
         height: 80px;
         border-radius: 50%;
         overflow: hidden;
+        cursor: pointer;
     }
     #writehead>img{
         width: 100%;
@@ -231,6 +321,9 @@ export default {
         font-weight: 600;
     }
     #commentscomuntdiv{
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
         border-bottom: 2px solid #E7E9ED;
     }
     #comments{

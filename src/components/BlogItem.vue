@@ -1,6 +1,6 @@
 <template>
     <div id="blogitems">
-        <div id="blogitem" v-for="(item,index) in blogitems" :key="index" @click="goBlog(item._id)" >
+        <div id="blogitem" v-for="(item,index) in blogitems" :key="index" @click="goBlog(item._id,item.writer)" >
             <div id="blogitemhead">
                 <img :src="item.headimg">
             </div>
@@ -11,7 +11,11 @@
             </div>
             <div id="blogiteminfo">
                 <div>{{item.writedate}}</div>
-                <div><i class="el-icon-view"></i> {{item.visitors.length}}</div>
+                <div id="inininfo">
+                    <i class="el-icon-view"></i> {{item.visitors.length}}
+                    <i class="el-icon-star-off"></i> {{item.collected.length}}
+                    <van-icon name="like-o" /> {{item.liked.length}}
+                </div>
                 <div>{{item.writerickname}}</div>
             </div>
         </div>
@@ -126,13 +130,14 @@ export default {
         quillEditor
     },
     methods:{
-        goBlog(id){
+        goBlog(id,writer){
             if(this.$store.state.isLogin==false){
                 this.$message.error('先登陆，宝贝儿');
 
             }else{
                 this.$router.push({name:"BlogInfo"})
                 sessionStorage.setItem('blogid',id)
+                sessionStorage.setItem('blogwriter',writer)
             }
         },
 
@@ -213,6 +218,16 @@ export default {
 </script>
 
 <style>
+    #inininfo{
+        display: flex;
+        align-items: center;
+    }
+    #inininfo>i{
+        margin-left: 5px;
+    }
+    #inininfo>van-icon{
+        margin-left: 5px;
+    }
     #writeblogbtn{
         width: 40px;
         height: 40px;

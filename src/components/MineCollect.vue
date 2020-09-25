@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div id="personalblogcarditemfoot">
-                    <div><i class="el-icon-s-comment">{{commentscount}}</i></div>
+                    <div><i class="el-icon-s-comment">{{item.commentcount}}</i></div>
                     <div><i class="el-icon-view"></i> {{item.visitors.length}}</div>
                 </div>
             </div>
@@ -58,7 +58,6 @@ export default {
             mycollect:[],
             myblogcount:0,
             mycollectcount:0,
-            commentscount:0,
             ishascontent:''
         }
     },
@@ -113,15 +112,6 @@ export default {
                 b = res.data.data
                 this.myblogcount = b.length
             })
-        })
-        .then(()=>{
-            this.$axios({
-                    method:'get',
-                    url:'/blog/findcommentbyid?blogid='+this.id
-                })
-                .then(res=>{
-                    this.commentscount = res.data.data.length;
-                })
         })
     }
 }
